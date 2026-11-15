@@ -6,6 +6,7 @@ venv/
 Final SMILES list 33-Zhongda.csv
 loo_predictions.csv
 best_params.json
+baseline_results.json
 feature_selection_results.json
 Fig_R1_ModelComparison.png
 Fig_R2_Parity.png

@@ -12,6 +12,8 @@ The accompanying manuscript and supporting-information documents are not part of
 - `feature_selection.py` runs descriptor stability selection and the descriptor-count analysis.
 - `final_results.csv` and the PNG files are analysis outputs provided in the project folder.
 
+The checked-in result table and figures were supplied with the original project folder. They predate the current fold-wise imputation and variance-filtering implementation; rerun the scripts with the authorized input dataset before treating generated results as a reproduction of the current code.
+
 ## Input data
 
 Both scripts expect `Final SMILES list 33-Zhongda.csv` in the working directory. It was not present in the supplied project folder, so it is not included here. The scripts require a semicolon-delimited CSV containing `SMILES`, `Name`, and `lnk` columns. Obtain the data file from the authors or its authorized source and place it beside the scripts before running either analysis.
@@ -33,7 +35,7 @@ python qsar_benchmark.py
 python feature_selection.py
 ```
 
-The scripts write figures and tabular/JSON outputs into the current directory. Record package versions and the exact input data used when reproducing a publication result.
+The scripts write figures and tabular/JSON outputs into the current directory, including `baseline_results.json`. Record package versions and the exact input data used when reproducing a publication result.
 
 ## Citation and reuse
 

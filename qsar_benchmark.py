@@ -133,7 +133,6 @@ for name, (pipe, grid) in MODELS.items():
 res = pd.DataFrame(primary).merge(pd.DataFrame(robust), on='Model')
 res['params'] = res['Model'].map(lambda k: json.dumps(best_params[k]))
 res.to_csv('final_results.csv', index=False, float_format='%.8g')
-pd.DataFrame(loo_pred).to_csv('loo_predictions.csv', index=False)
 json.dump(best_params, open('best_params.json','w'), indent=2)
 
 # baseline (predict the mean)
@@ -141,8 +140,20 @@ yb = cross_val_predict(DummyRegressor(strategy='mean'), Xv, y, cv=loo).ravel()
 base_rmse = float(np.sqrt(mean_squared_error(y, yb)))
 base_q2 = float(r2_score(y, yb)); base_mae = float(mean_absolute_error(y,yb))
 print(f'\nMean-predictor baseline: Q2={base_q2:.3f}  RMSE={base_rmse:.3f}  MAE={base_mae:.3f}')
-json.dump({'Q2_LOO':base_q2,'RMSE_LOO':base_rmse,'MAE_LOO':base_mae},
-          open('baseline_results.json','w'),indent=2)
+aromaticity = np.array([int(any(a.GetIsAromatic() for a in Chem.MolFromSmiles(s).GetAtoms()))
+                           for s in df.loc[idx,'SMILES']], dtype=float)
+aromaticity_tpsa = np.column_stack([aromaticity, X['TPSA'].to_numpy(dtype=float)])
+simple_model = Pipeline([('impute',SimpleImputer(strategy='median',keep_empty_features=True)),
+                         ('sc',StandardScaler()),('m',LinearRegression())])
+yp_simple = np.asarray(cross_val_predict(simple_model,aromaticity_tpsa,y,cv=loo,n_jobs=-1)).ravel()
+simple_metrics = {'Q2_LOO':float(r2_score(y,yp_simple)),
+                  'RMSE_LOO':float(np.sqrt(mean_squared_error(y,yp_simple))),
+                  'MAE_LOO':float(mean_absolute_error(y,yp_simple))}
+loo_pred['Aromaticity + TPSA'] = yp_simple.tolist()
+pd.DataFrame(loo_pred).to_csv('loo_predictions.csv', index=False)
+print('Aromaticity + TPSA baseline: Q2={Q2_LOO:.3f}  RMSE={RMSE_LOO:.3f}  MAE={MAE_LOO:.3f}'.format(**simple_metrics))
+json.dump({'mean_predictor':{'Q2_LOO':base_q2,'RMSE_LOO':base_rmse,'MAE_LOO':base_mae},
+           'aromaticity_tpsa':simple_metrics},open('baseline_results.json','w'),indent=2)
 
 # ---------------------------------------------------------------- 4. leakage demonstration
 X_full = SimpleImputer(strategy='median', keep_empty_features=True).fit_transform(Xv)

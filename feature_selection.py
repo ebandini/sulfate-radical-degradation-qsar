@@ -52,19 +52,17 @@ def cv(est):
 
 # ---- 1. stability selection ----
 rng=np.random.default_rng(42); n,p=Xv.shape; ITERS=200; m=int(round(n*0.75))
-fc=np.zeros(p); lc=np.zeros(p); eligible=np.zeros(p)
+fc=np.zeros(p); lc=np.zeros(p)
 for _ in range(ITERS):
     s=rng.choice(n,m,replace=False); ys=y[s]
     Xi=SimpleImputer(strategy='median',keep_empty_features=True).fit_transform(Xv[s])
     vt=VarianceThreshold(0.0); Xi=vt.fit_transform(Xi); support=np.flatnonzero(vt.get_support())
-    eligible[support]+=1
     Xz=StandardScaler().fit_transform(Xi)
     fsel=SelectKBest(f_regression,k=min(10,Xz.shape[1])).fit(Xz,ys)
     fc[support[fsel.get_support()]]+=1
     lasso=LassoCV(cv=3,n_alphas=30,max_iter=50000,random_state=0).fit(Xz,ys)
     lc[support[np.abs(lasso.coef_)>1e-8]]+=1
-ff=np.divide(fc,eligible,out=np.zeros_like(fc),where=eligible>0)
-lf=np.divide(lc,eligible,out=np.zeros_like(lc),where=eligible>0)
+ff,lf=fc/ITERS,lc/ITERS
 avg=(ff+lf)/2; topidx=np.argsort(-avg)[:12]
 
 # ---- 2. how many descriptors? nested-CV scan ----
@@ -73,6 +71,8 @@ for k in ks:
     prep=[('impute',SimpleImputer(strategy='median',keep_empty_features=True)),('vt',VarianceThreshold(0.0)),('sc',StandardScaler())]
     ols_q.append(cv(Pipeline(prep+[('sel',SelectKBest(f_regression,k=k)),('m',LinearRegression())]))[0])
     rid_q.append(cv(Pipeline(prep+[('sel',SelectKBest(f_regression,k=k)),('m',RidgeCV(alphas=np.logspace(-2,3,20)))]))[0])
+benchmark=pd.read_csv('final_results.csv')
+gb_q2=float(benchmark.loc[benchmark['Model']=='Gradient Boosting','Q2_LOO'].iloc[0])
 
 # ---- 3. CV ridge with fold-wise f-test selection; full-data stable set is descriptive ----
 K=10; sel=list(topidx[:K]); Xs=Xv[:,sel]
@@ -101,9 +101,11 @@ plt.rcParams.update({'font.size':11,'axes.grid':True,'grid.alpha':.3,'figure.dpi
 fig,ax=plt.subplots(figsize=(7.2,5))
 ax.plot(list(ks),ols_q,'o-',color='#4C72B0',label='OLS (selection in-fold)')
 ax.plot(list(ks),rid_q,'s-',color='#DD8452',label='Ridge (selection in-fold)')
-ax.axhline(0,color='#888',ls='--',lw=1,label='Q2 = 0 reference'); ax.axvspan(9,13,color='#CDE0CD',alpha=.5,zorder=0)
+ax.axhline(0,color='#888',ls='--',lw=1,label='Q2 = 0 reference')
+ax.axhline(gb_q2,color='#C44E52',ls=':',lw=1.5,label='Gradient Boosting (best benchmark)')
+ax.axvspan(9,13,color='#CDE0CD',alpha=.5,zorder=0)
 ax.axvline(10,color='#2E7D32',lw=1.2,ls='-.',alpha=.8); ax.set_xticks(list(ks))
-ax.set_ylim(min(0,min(ols_q+rid_q))-.1,max(0,max(ols_q+rid_q))+.1)
+ax.set_ylim(min(0,gb_q2,min(ols_q+rid_q))-.1,max(0,gb_q2,max(ols_q+rid_q))+.1)
 ax.set_xlabel('Number of descriptors (k)'); ax.set_ylabel('Q² (leave-one-out)')
 ax.set_title('How many descriptors are needed?\nNested-CV performance vs descriptor count'); ax.legend(loc='lower right',fontsize=9)
 plt.tight_layout(); plt.savefig('Fig_R4_DescriptorCount.png',bbox_inches='tight'); plt.close()

@@ -25,11 +25,6 @@
       "lasso": 0.785,
       "mean": 0.485
     },
-    "PEOE_VSA13": {
-      "f_test": 0.4919786096256685,
-      "lasso": 0.46524064171123,
-      "mean": 0.4786096256684492
-    },
     "NOCount": {
       "f_test": 0.795,
       "lasso": 0.145,
@@ -45,20 +40,25 @@
       "lasso": 0.505,
       "mean": 0.4525
     },
-    "SlogP_VSA8": {
-      "f_test": 0.0,
-      "lasso": 0.7054794520547946,
-      "mean": 0.3527397260273973
-    },
-    "fr_aryl_methyl": {
-      "f_test": 0.0,
-      "lasso": 0.6917808219178082,
-      "mean": 0.3458904109589041
+    "PEOE_VSA13": {
+      "f_test": 0.46,
+      "lasso": 0.435,
+      "mean": 0.4475
     },
     "MaxPartialCharge": {
       "f_test": 0.585,
       "lasso": 0.01,
       "mean": 0.2975
+    },
+    "VSA_EState8": {
+      "f_test": 0.075,
+      "lasso": 0.47,
+      "mean": 0.27249999999999996
+    },
+    "SMR_VSA5": {
+      "f_test": 0.45,
+      "lasso": 0.085,
+      "mean": 0.2675
     }
   },
   "stability_selected_top10": [
@@ -67,11 +67,11 @@
     "TPSA",
     "PEOE_VSA2",
     "fr_NH0",
-    "PEOE_VSA13",
     "NOCount",
     "NumHeteroatoms",
     "BCUT2D_MWLOW",
-    "SlogP_VSA8"
+    "PEOE_VSA13",
+    "MaxPartialCharge"
   ],
   "scan_ols_q2_loo": [
     -0.5210357776366903,
@@ -113,20 +113,20 @@
     0.6164488078889272
   ],
   "full_data_stable_ridge": {
-    "training_r2": 0.719418814251407,
+    "training_r2": 0.6881044309963055,
     "alpha": 12.689610031679234,
     "intercept": -3.548454545454547,
     "standardized_coefficients": {
-      "EState_VSA6": -0.20043338249323567,
-      "BertzCT": -0.19421822830768284,
-      "TPSA": -0.10405401712939742,
-      "PEOE_VSA2": -0.14377842386925763,
-      "fr_NH0": -0.2362164555301009,
-      "PEOE_VSA13": -0.10713824206849164,
-      "NOCount": -0.04433184179266438,
-      "NumHeteroatoms": -0.12780655226336318,
-      "BCUT2D_MWLOW": -0.24532657904059582,
-      "SlogP_VSA8": 0.16470457013218887
+      "EState_VSA6": -0.20824900749535197,
+      "BertzCT": -0.15929988369215625,
+      "TPSA": -0.10857659523990988,
+      "PEOE_VSA2": -0.1391371623930534,
+      "fr_NH0": -0.24435005526697254,
+      "NOCount": -0.04172063157548742,
+      "NumHeteroatoms": -0.15438765624701137,
+      "BCUT2D_MWLOW": -0.24859622010701682,
+      "PEOE_VSA13": -0.10421638567782658,
+      "MaxPartialCharge": -0.03329894293590764
     }
   }
 }

@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+Final SMILES list 33-Zhongda.csv
+loo_predictions.csv
+best_params.json
+feature_selection_results.json
+Fig_R1_ModelComparison.png
+Fig_R2_Parity.png
+Fig_R4_DescriptorCount.png
+Fig_R5_StabilitySelection.png
+Fig_R6_FinalParity.png
+

@@ -1,0 +1,38 @@
+{
+  "OLS (all descriptors)": {},
+  "OLS (k-best, tuned)": {
+    "sel__k": 8
+  },
+  "Ridge": {
+    "m__alpha": 316.22776601683796
+  },
+  "Lasso": {
+    "m__alpha": 0.21544346900318823
+  },
+  "ElasticNet": {
+    "m__alpha": 0.46415888336127775,
+    "m__l1_ratio": 0.5
+  },
+  "PLS": {
+    "m__n_components": 1
+  },
+  "kNN": {
+    "m__n_neighbors": 3,
+    "m__weights": "uniform",
+    "sel__k": 20
+  },
+  "SVR (RBF)": {
+    "m__C": 10,
+    "m__epsilon": 0.3,
+    "m__gamma": 0.01,
+    "sel__k": 20
+  },
+  "Random Forest": {
+    "m__max_depth": 3,
+    "m__min_samples_leaf": 2
+  },
+  "Gradient Boosting": {
+    "m__learning_rate": 0.05,
+    "m__n_estimators": 100
+  }
+}

@@ -23,7 +23,7 @@ from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 
-DATA='Final SMILES list 33-Zhongda.csv'
+DATA='dataset.csv'
 df=pd.read_csv(DATA,sep=';')
 required={'SMILES','lnk'}
 missing=required.difference(df.columns)
@@ -61,7 +61,7 @@ for _ in range(ITERS):
     Xz=StandardScaler().fit_transform(Xi)
     fsel=SelectKBest(f_regression,k=min(10,Xz.shape[1])).fit(Xz,ys)
     fc[support[fsel.get_support()]]+=1
-    lasso=LassoCV(cv=3,n_alphas=30,max_iter=5000,random_state=0).fit(Xz,ys)
+    lasso=LassoCV(cv=3,n_alphas=30,max_iter=50000,random_state=0).fit(Xz,ys)
     lc[support[np.abs(lasso.coef_)>1e-8]]+=1
 ff=np.divide(fc,eligible,out=np.zeros_like(fc),where=eligible>0)
 lf=np.divide(lc,eligible,out=np.zeros_like(lc),where=eligible>0)

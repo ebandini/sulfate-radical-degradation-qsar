@@ -35,7 +35,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 
 SEED = 42
-DATA = 'Final SMILES list 33-Zhongda.csv'   # columns: No;Name;SMILES;lnk  (';'-separated)
+DATA = 'dataset.csv'   # columns: No;Name;SMILES;lnk  (';'-separated)
 
 # ---------------------------------------------------------------- 1. data
 df = pd.read_csv(DATA, sep=';')
@@ -66,7 +66,10 @@ y = df.loc[idx, 'lnk'].astype(float).values
 names_cmpd = df.loc[idx, 'Name'].tolist()
 X = X.replace([np.inf, -np.inf], np.nan)
 feat = list(X.columns); Xv = X.values
-print(f'N = {len(y)} compounds | {Xv.shape[1]} descriptors | p/n = {Xv.shape[1]/len(y):.1f}')
+X_full_for_count = SimpleImputer(strategy='median', keep_empty_features=True).fit_transform(Xv)
+p_full = int(VarianceThreshold(0.0).fit(X_full_for_count).get_support().sum())
+print(f'N = {len(y)} compounds | {Xv.shape[1]} raw RDKit descriptors | '
+      f'{p_full} non-constant across the full dataset (descriptive count; filtering is fitted per CV fold)')
 
 # ---------------------------------------------------------------- 2. models
 def PREP(scale=True):
